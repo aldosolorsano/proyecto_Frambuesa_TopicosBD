@@ -1,10 +1,10 @@
-# 🍓 FrambuesaTrack — API multibase para ranchos de frambuesa
+# FrambuesaTrack — API multibase para ranchos de frambuesa
 
 Proyecto de la materia **Tópicos de Bases de Datos**. Web Service REST hecho con **Node.js + Express** que guarda su información en **tres motores de base de datos distintos**.
 
-> **Proyecto privado y de autoría propia.** El repositorio debe mantenerse en modo *privado*.
+> **Proyecto publico y de autoría propia.** El repositorio debe mantenerse en modo *publico*.
 
-## 🧱 Motores utilizados
+## Motores utilizados
 
 | Motor | Tipo | Recursos |
 |---|---|---|
@@ -12,7 +12,7 @@ Proyecto de la materia **Tópicos de Bases de Datos**. Web Service REST hecho co
 | **MongoDB 7** | NoSQL (documentos) | `inspecciones`, `plagas` |
 | **Redis 7** | Clave-Valor | `lecturas` (sensores) |
 
-## 📚 Recursos y endpoints
+## Recursos y endpoints
 
 Los **6 recursos** tienen `GET` (lista y detalle), `POST`, `PATCH` y `DELETE`:
 
@@ -50,7 +50,7 @@ Los marcados no aparecen en listados ni detalles, salvo con `?incluir_eliminados
 ### Integridad entre motores
 Mongo y Redis no tienen llaves foráneas, por eso el código consulta PostgreSQL (`existeRancho`, `existeProductor`) antes de guardar. Si el rancho no existe responde `422`.
 
-## ⚙️ Instalación y ejecución
+## Instalación y ejecución
 
 **Requisitos:** Git, Docker con Docker Compose y (opcional) Node.js 20 o superior.
 
@@ -81,7 +81,7 @@ curl http://localhost:3000/health
 ### Variables de entorno (`.env`)
 `PORT` (3000) · `POSTGRES_URL` · `MONGO_URL` · `MONGO_DB` · `REDIS_URL`. Los valores de ejemplo están en `.env.example`. **El archivo `.env` no se sube a Git.**
 
-## 🧪 Ejemplos (curl)
+## Ejemplos (curl)
 
 ```bash
 # PostgreSQL: productor → rancho → cosecha
@@ -117,12 +117,30 @@ curl localhost:3000/api/ranchos/1/resumen
 
 Errores: `400` datos inválidos · `404` no encontrado · `409` integridad referencial · `422` el rancho/productor no existe · `503` (en `/health`) una base está caída.
 
-## 🗂️ Estructura
+## Datos de ejemplo
+
+El archivo `sembrar.js` llena el proyecto con datos de prueba (sin acentos, con nombres y lugares de Mexico) usando la propia API, asi que pasa por las mismas validaciones. Crea: 6 productores, 8 ranchos, 24 cosechas, 10 inspecciones, 8 plagas y 32 lecturas de sensores.
+
+Con la API corriendo:
+```bash
+node sembrar.js            # o: npm run sembrar
+```
+
+Si no tienes Node instalado y usas Docker:
+```bash
+docker compose cp sembrar.js api:/app/sembrar.js
+docker compose exec api node sembrar.js
+```
+
+Si lo ejecutas dos veces, los datos se duplican. Para empezar de cero: `docker compose down -v` y despues `docker compose up --build`.
+
+## Estructura
 
 ```
 frambuesatrack/
 ├── app.js               # Servidor, /health y /resumen
 ├── db.js                # Conexiones a PostgreSQL, MongoDB y Redis
+├── sembrar.js           # Datos de ejemplo para las 3 bases
 ├── utilidades.js        # Validaciones, existeRancho/existeProductor, lecturas de Redis
 ├── rutas/
 │   ├── productores.js   # PostgreSQL
@@ -138,15 +156,15 @@ frambuesatrack/
 
 Cada archivo de `rutas/` sigue el mismo orden: `validar()` → GET lista → GET uno → POST → PATCH → DELETE.
 
-## 🔒 Repositorio privado y trabajo en equipo
+## Repositorio privado y trabajo en equipo
 
-1. Crear el repositorio en GitHub/GitLab con visibilidad **Private**.
+1. Crear el repositorio en GitHub/GitLab con visibilidad **Publico**.
 2. Subir el proyecto:
    ```bash
    git init -b main
    git add .
    git commit -m "feat: estructura inicial de FrambuesaTrack"
-   git remote add origin <URL-DEL-REPOSITORIO-PRIVADO>
+   git remote add origin <URL-DEL-REPOSITORIO-Publico>
    git push -u origin main
    ```
 3. Invitar a todos los integrantes y al docente como colaboradores.
@@ -167,11 +185,11 @@ Cada archivo de `rutas/` sigue el mismo orden: `validar()` → GET lista → GET
 | Integrante | Responsabilidad |
 |---|---|
 | Integrante 1 | PostgreSQL: `sql/init.sql`, `productores.js`, `ranchos.js`, `cosechas.js` |
-| Integrante 2 | MongoDB: `inspecciones.js`, `plagas.js` |
-| Integrante 3 | Redis: `lecturas.js`, `/health`, `/resumen` |
-| Integrante 4 | `db.js`, `utilidades.js`, Docker, README y pruebas |
+| Integrante 1 | MongoDB: `inspecciones.js`, `plagas.js` |
+| Integrante 2 | Redis: `lecturas.js`, `/health`, `/resumen` |
+| Integrante 2 | `db.js`, `utilidades.js`, Docker, README y pruebas |
 
-## 👥 Equipo
+## Equipo
 | Nombre | Rol | Usuario Git |
 |---|---|---|
 | _(completar)_ | | |
