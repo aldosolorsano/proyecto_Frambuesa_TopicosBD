@@ -1,0 +1,44 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: frambuesa
+      POSTGRES_PASSWORD: frambuesa_pass
+      POSTGRES_DB: frambuesatrack
+    ports: ["5432:5432"]
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U frambuesa -d frambuesatrack"]
+      interval: 5s
+      retries: 10
+
+  mongo:
+    image: mongo:7
+    ports: ["27017:27017"]
+    volumes: [mongodata:/data/db]
+
+  redis:
+    image: redis:7-alpine
+    ports: ["6379:6379"]
+    volumes: [redisdata:/data]
+
+  api:
+    build: .
+    ports: ["3000:3000"]
+    environment:
+      PORT: 3000
+      POSTGRES_URL: postgresql://frambuesa:frambuesa_pass@postgres:5432/frambuesatrack
+      MONGO_URL: mongodb://mongo:27017
+      MONGO_DB: frambuesatrack
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      postgres: { condition: service_healthy }
+      mongo: { condition: service_started }
+      redis: { condition: service_started }
+
+volumes:
+  pgdata:
+  mongodata:
+  redisdata:
